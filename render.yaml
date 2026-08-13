@@ -1,0 +1,29 @@
+# Render Deployment Configuration
+# This file auto-configures your Flask app on Render
+
+services:
+  - type: web
+    name: godmode-security-scanner
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_SECRET_KEY
+        value: CYBERPUNK_ADMIN_2024
+      - key: GOOGLE_CLIENT_ID
+        value: 995155395491-0h0uo628fifocrrn9lchvoq38oms31bu.apps.googleusercontent.com
+      - key: GOOGLE_CLIENT_SECRET
+        value: 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
+      - key: GITHUB_CLIENT_ID
+        value: Ov23liHVxNIIpwweclwD
+      - key: GITHUB_CLIENT_SECRET
+        value: e988b8b329fd3d36fad306601495ab49b3edfe99
+      - key: ZAP_ENABLED
+        value: false
+      - key: FLASK_ENV
+        value: production

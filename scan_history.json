@@ -1,0 +1,517 @@
+[
+  {
+    "scan_id": "20260717_101658",
+    "target_url": "https://https::/query-arena.netlify.app",
+    "timestamp": "2026-07-17T10:17:00.318966",
+    "vulnerability_count": 2,
+    "vulnerabilities": [
+      {
+        "type": "XSS",
+        "url": "https://https::/query-arena.netlify.app/search",
+        "parameter": "q",
+        "evidence": "Input reflected without encoding: <script>alert('xss')</script>",
+        "confidence": "High"
+      },
+      {
+        "type": "Security Misconfiguration",
+        "url": "https://https::/query-arena.netlify.app/.env",
+        "parameter": "none",
+        "evidence": "Sensitive configuration files are publicly accessible",
+        "confidence": "High"
+      }
+    ],
+    "report_path": "reports\\report_20260717_101658.html",
+    "status": "completed",
+    "scanned_by": "admin"
+  },
+  {
+    "scan_id": "20260718_115129",
+    "target_url": "https://www.youtube.com/",
+    "timestamp": "2026-07-18T11:51:37.597679",
+    "vulnerability_count": 0,
+    "vulnerabilities": [],
+    "report_path": "reports\\report_20260718_115129.html",
+    "status": "completed",
+    "scanned_by": "admin"
+  },
+  {
+    "scan_id": "1e65b994-e224-48ab-828a-d2a337484f4a",
+    "target_url": "https://https::/query-arena.netlify.app",
+    "timestamp": "2026-07-19T12:06:46.726846",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "168ea095-6333-46de-844b-ba4fc6219845",
+        "name": "Missing Security Headers",
+        "type": "Security Misconfiguration",
+        "severity": "Medium",
+        "url": "https://https::/query-arena.netlify.app",
+        "parameter": "Headers",
+        "evidence": "X-Content-Type-Options, X-Frame-Options headers missing",
+        "description": "Security headers not present in HTTP responses",
+        "solution": "Add X-Content-Type-Options, X-Frame-Options, CSP headers",
+        "confidence": "High"
+      }
+    ],
+    "scanned_by": "lithesh_.s_google"
+  },
+  {
+    "scan_id": "3f0c0129-7e6e-4e41-aa64-91efcd2c3964",
+    "target_url": "https://query-arena.netlify.app",
+    "timestamp": "2026-07-19T12:07:21.335305",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "262ac69c-0382-4392-93de-dbbc13a7bcef",
+        "name": "Missing Security Headers",
+        "type": "Security Misconfiguration",
+        "severity": "Medium",
+        "url": "https://query-arena.netlify.app",
+        "parameter": "Headers",
+        "evidence": "X-Content-Type-Options, X-Frame-Options headers missing",
+        "description": "Security headers not present in HTTP responses",
+        "solution": "Add X-Content-Type-Options, X-Frame-Options, CSP headers",
+        "confidence": "High"
+      }
+    ],
+    "scanned_by": "lithesh_.s_google"
+  },
+  {
+    "scan_id": "93dce933-7027-440a-8cec-d33a4997dbc7",
+    "target_url": "https://query-arena.netlify.app",
+    "timestamp": "2026-07-19T12:30:01.796016",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "114ae355-b772-47bb-92fd-bec3a5bb6c50",
+        "name": "Missing Security Headers",
+        "type": "Security Misconfiguration",
+        "severity": "Medium",
+        "url": "https://query-arena.netlify.app",
+        "parameter": "Headers",
+        "evidence": "X-Content-Type-Options, X-Frame-Options headers missing",
+        "description": "Security headers not present in HTTP responses",
+        "solution": "Add X-Content-Type-Options, X-Frame-Options, CSP headers",
+        "confidence": "High"
+      }
+    ],
+    "scanned_by": "lithes-coder_github"
+  },
+  {
+    "scan_id": "3b70f0ad-74ae-4224-802d-f85d618b897f",
+    "target_url": "https://query-arena.netlify.app",
+    "timestamp": "2026-07-19T14:21:27.349541",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "VULN-8916",
+        "name": "Cross-Site Scripting (XSS)",
+        "severity": "High",
+        "type": "XSS",
+        "url": "https://query-arena.netlify.app",
+        "parameter": "message",
+        "evidence": "Input reflected without sanitization: <script>alert('xss')</script>",
+        "description": "XSS vulnerabilities allow attackers to inject malicious scripts into web pages viewed by other users.",
+        "solution": "Implement proper input validation and output encoding. Use Content Security Policy (CSP) headers.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-8177",
+        "name": "SQL Injection",
+        "severity": "Critical",
+        "type": "Injection",
+        "url": "https://query-arena.netlify.app",
+        "parameter": "product_id",
+        "evidence": "Parameter 'id' is vulnerable: id=1' OR '1'='1",
+        "description": "SQL Injection allows attackers to execute arbitrary SQL commands in the database. This can lead to data theft, modification, or deletion.",
+        "solution": "Use parameterized queries or prepared statements. Never concatenate user input directly into SQL queries.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-8019",
+        "name": "Insufficient Logging and Monitoring",
+        "severity": "Low",
+        "type": "Logging",
+        "url": "https://query-arena.netlify.app",
+        "parameter": "value",
+        "evidence": "No logging detected for authentication failures",
+        "description": "Insufficient logging and monitoring, coupled with missing or ineffective integration with incident response, allows attackers to further attack systems and maintain persistence.",
+        "solution": "Ensure all login, access control, and server-side input validation failures are logged. Establish effective monitoring and alerting.",
+        "confidence": "Medium"
+      },
+      {
+        "id": "VULN-4305",
+        "name": "Missing Security Headers",
+        "severity": "Low",
+        "type": "Security Misconfiguration",
+        "url": "https://query-arena.netlify.app",
+        "parameter": "query",
+        "evidence": "Missing X-Frame-Options header in HTTP response",
+        "description": "Security headers add an extra layer of protection by helping to mitigate attacks and security vulnerabilities.",
+        "solution": "Implement security headers including X-Frame-Options, X-Content-Type-Options, Content-Security-Policy, and Strict-Transport-Security.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-5682",
+        "name": "Security Misconfiguration",
+        "severity": "Medium",
+        "type": "Security Misconfiguration",
+        "url": "https://query-arena.netlify.app",
+        "parameter": "data",
+        "evidence": "Server version exposed in HTTP headers",
+        "description": "Security misconfiguration is the most commonly seen vulnerability. This includes insecure default configurations, incomplete configurations, and verbose error messages.",
+        "solution": "Implement secure configuration baselines. Regularly review and update configurations. Remove unnecessary features.",
+        "confidence": "High"
+      }
+    ],
+    "scanned_by": "lithes-coder_github"
+  },
+  {
+    "scan_id": "5358607e-60cd-4543-8d2a-ad17b5a6a5fb",
+    "target_url": "https://youtube.com",
+    "timestamp": "2026-07-19T14:30:24.946589",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "VULN-7838",
+        "name": "Insecure Deserialization",
+        "severity": "Critical",
+        "type": "Insecure Deserialization",
+        "url": "https://youtube.com",
+        "parameter": "query",
+        "evidence": "User-controlled data passed to unserialize() function",
+        "description": "Insecure deserialization often leads to remote code execution. Even if it doesn't result in RCE, it can be used to perform replay attacks or privilege escalation.",
+        "solution": "Avoid deserializing untrusted data. Implement integrity checks. Use serialization formats that only permit primitive data types.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-9153",
+        "name": "Cross-Site Request Forgery (CSRF)",
+        "severity": "Medium",
+        "type": "CSRF",
+        "url": "https://youtube.com",
+        "parameter": "query",
+        "evidence": "Form submission lacks anti-CSRF token",
+        "description": "CSRF attacks force authenticated users to submit requests to a web application against which they are currently authenticated.",
+        "solution": "Implement CSRF tokens in forms. Use SameSite cookie attributes. Validate Referer and Origin headers.",
+        "confidence": "Medium"
+      },
+      {
+        "id": "VULN-3720",
+        "name": "Missing Security Headers",
+        "severity": "Low",
+        "type": "Security Misconfiguration",
+        "url": "https://youtube.com",
+        "parameter": "value",
+        "evidence": "Missing X-Frame-Options header in HTTP response",
+        "description": "Security headers add an extra layer of protection by helping to mitigate attacks and security vulnerabilities.",
+        "solution": "Implement security headers including X-Frame-Options, X-Content-Type-Options, Content-Security-Policy, and Strict-Transport-Security.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-4642",
+        "name": "Cross-Site Scripting (XSS)",
+        "severity": "High",
+        "type": "XSS",
+        "url": "https://youtube.com",
+        "parameter": "message",
+        "evidence": "Input reflected without sanitization: <script>alert('xss')</script>",
+        "description": "XSS vulnerabilities allow attackers to inject malicious scripts into web pages viewed by other users.",
+        "solution": "Implement proper input validation and output encoding. Use Content Security Policy (CSP) headers.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-9731",
+        "name": "Security Misconfiguration",
+        "severity": "Medium",
+        "type": "Security Misconfiguration",
+        "url": "https://youtube.com",
+        "parameter": "query",
+        "evidence": "Server version exposed in HTTP headers",
+        "description": "Security misconfiguration is the most commonly seen vulnerability. This includes insecure default configurations, incomplete configurations, and verbose error messages.",
+        "solution": "Implement secure configuration baselines. Regularly review and update configurations. Remove unnecessary features.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-1635",
+        "name": "Using Components with Known Vulnerabilities",
+        "severity": "Medium",
+        "type": "Vulnerable Components",
+        "url": "https://youtube.com",
+        "parameter": "value",
+        "evidence": "jQuery version 1.12.4 detected (CVE-2019-11358)",
+        "description": "Components such as libraries, frameworks, and other software modules often run with full privileges. If a vulnerable component is exploited, it can facilitate serious data loss or server takeover.",
+        "solution": "Regularly update components. Remove unused dependencies. Monitor for vulnerabilities in dependencies.",
+        "confidence": "High"
+      }
+    ],
+    "scanned_by": "lithes-coder_github"
+  },
+  {
+    "scan_id": "699d4223-1edb-44a9-bb17-66d1325acaa8",
+    "target_url": "https://youtube.com",
+    "timestamp": "2026-07-19T14:39:30.014604",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "VULN-7112",
+        "name": "Security Misconfiguration",
+        "severity": "Medium",
+        "type": "Security Misconfiguration",
+        "url": "https://youtube.com",
+        "parameter": "data",
+        "evidence": "Server version exposed in HTTP headers",
+        "description": "Security misconfiguration is the most commonly seen vulnerability. This includes insecure default configurations, incomplete configurations, and verbose error messages.",
+        "solution": "Implement secure configuration baselines. Regularly review and update configurations. Remove unnecessary features.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-3464",
+        "name": "Cross-Site Scripting (XSS)",
+        "severity": "High",
+        "type": "XSS",
+        "url": "https://youtube.com",
+        "parameter": "name",
+        "evidence": "Input reflected without sanitization: <script>alert('xss')</script>",
+        "description": "XSS vulnerabilities allow attackers to inject malicious scripts into web pages viewed by other users.",
+        "solution": "Implement proper input validation and output encoding. Use Content Security Policy (CSP) headers.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-4591",
+        "name": "Insufficient Logging and Monitoring",
+        "severity": "Low",
+        "type": "Logging",
+        "url": "https://youtube.com",
+        "parameter": "data",
+        "evidence": "No logging detected for authentication failures",
+        "description": "Insufficient logging and monitoring, coupled with missing or ineffective integration with incident response, allows attackers to further attack systems and maintain persistence.",
+        "solution": "Ensure all login, access control, and server-side input validation failures are logged. Establish effective monitoring and alerting.",
+        "confidence": "Medium"
+      },
+      {
+        "id": "VULN-3890",
+        "name": "Insecure Deserialization",
+        "severity": "Critical",
+        "type": "Insecure Deserialization",
+        "url": "https://youtube.com",
+        "parameter": "query",
+        "evidence": "User-controlled data passed to unserialize() function",
+        "description": "Insecure deserialization often leads to remote code execution. Even if it doesn't result in RCE, it can be used to perform replay attacks or privilege escalation.",
+        "solution": "Avoid deserializing untrusted data. Implement integrity checks. Use serialization formats that only permit primitive data types.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-2618",
+        "name": "Sensitive Data Exposure",
+        "severity": "High",
+        "type": "Cryptographic Failures",
+        "url": "https://youtube.com",
+        "parameter": "value",
+        "evidence": "Password transmitted over HTTP instead of HTTPS",
+        "description": "Sensitive data exposure occurs when applications fail to adequately protect sensitive information such as passwords, credit cards, or personal information.",
+        "solution": "Encrypt sensitive data at rest and in transit. Use strong encryption algorithms. Disable caching of sensitive data.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-3045",
+        "name": "SQL Injection",
+        "severity": "Critical",
+        "type": "Injection",
+        "url": "https://youtube.com",
+        "parameter": "category",
+        "evidence": "Parameter 'id' is vulnerable: id=1' OR '1'='1",
+        "description": "SQL Injection allows attackers to execute arbitrary SQL commands in the database. This can lead to data theft, modification, or deletion.",
+        "solution": "Use parameterized queries or prepared statements. Never concatenate user input directly into SQL queries.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-3909",
+        "name": "Cross-Site Request Forgery (CSRF)",
+        "severity": "Medium",
+        "type": "CSRF",
+        "url": "https://youtube.com",
+        "parameter": "input",
+        "evidence": "Form submission lacks anti-CSRF token",
+        "description": "CSRF attacks force authenticated users to submit requests to a web application against which they are currently authenticated.",
+        "solution": "Implement CSRF tokens in forms. Use SameSite cookie attributes. Validate Referer and Origin headers.",
+        "confidence": "Medium"
+      }
+    ],
+    "scanned_by": "lithes-coder_github"
+  },
+  {
+    "scan_id": "a0606193-1849-4b90-86e2-9891b09e063f",
+    "target_url": "https://www.w3schools.com",
+    "timestamp": "2026-08-02T12:23:44.995415",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "VULN-7898",
+        "name": "Sensitive Data Exposure",
+        "severity": "High",
+        "type": "Cryptographic Failures",
+        "url": "https://www.w3schools.com",
+        "parameter": "input",
+        "evidence": "Password transmitted over HTTP instead of HTTPS",
+        "description": "Sensitive data exposure occurs when applications fail to adequately protect sensitive information such as passwords, credit cards, or personal information.",
+        "solution": "Encrypt sensitive data at rest and in transit. Use strong encryption algorithms. Disable caching of sensitive data.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-6816",
+        "name": "Cross-Site Scripting (XSS)",
+        "severity": "High",
+        "type": "XSS",
+        "url": "https://www.w3schools.com",
+        "parameter": "search",
+        "evidence": "Input reflected without sanitization: <script>alert('xss')</script>",
+        "description": "XSS vulnerabilities allow attackers to inject malicious scripts into web pages viewed by other users.",
+        "solution": "Implement proper input validation and output encoding. Use Content Security Policy (CSP) headers.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-2099",
+        "name": "Insecure Direct Object Reference",
+        "severity": "High",
+        "type": "Broken Access Control",
+        "url": "https://www.w3schools.com",
+        "parameter": "order_id",
+        "evidence": "Direct access to user data via ID parameter without authorization",
+        "description": "IDOR vulnerabilities occur when an application exposes internal implementation objects without proper authorization checks.",
+        "solution": "Implement proper access control checks. Use indirect object references or verify user permissions.",
+        "confidence": "Medium"
+      }
+    ],
+    "vulnerability_count": 3,
+    "scanned_by": "pikachu_26_google"
+  },
+  {
+    "scan_id": "aa46fe4c-323d-4aab-82c6-7f870815d0f1",
+    "target_url": "https://youtube.com",
+    "timestamp": "2026-08-02T13:21:49.028871",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "VULN-4109",
+        "name": "Sensitive Data Exposure",
+        "severity": "High",
+        "type": "Cryptographic Failures",
+        "url": "https://youtube.com",
+        "parameter": "data",
+        "evidence": "Password transmitted over HTTP instead of HTTPS",
+        "description": "Sensitive data exposure occurs when applications fail to adequately protect sensitive information such as passwords, credit cards, or personal information.",
+        "solution": "Encrypt sensitive data at rest and in transit. Use strong encryption algorithms. Disable caching of sensitive data.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-3570",
+        "name": "Missing Security Headers",
+        "severity": "Low",
+        "type": "Security Misconfiguration",
+        "url": "https://youtube.com",
+        "parameter": "value",
+        "evidence": "Missing X-Frame-Options header in HTTP response",
+        "description": "Security headers add an extra layer of protection by helping to mitigate attacks and security vulnerabilities.",
+        "solution": "Implement security headers including X-Frame-Options, X-Content-Type-Options, Content-Security-Policy, and Strict-Transport-Security.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-2555",
+        "name": "Security Misconfiguration",
+        "severity": "Medium",
+        "type": "Security Misconfiguration",
+        "url": "https://youtube.com",
+        "parameter": "query",
+        "evidence": "Server version exposed in HTTP headers",
+        "description": "Security misconfiguration is the most commonly seen vulnerability. This includes insecure default configurations, incomplete configurations, and verbose error messages.",
+        "solution": "Implement secure configuration baselines. Regularly review and update configurations. Remove unnecessary features.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-9702",
+        "name": "Insufficient Logging and Monitoring",
+        "severity": "Low",
+        "type": "Logging",
+        "url": "https://youtube.com",
+        "parameter": "value",
+        "evidence": "No logging detected for authentication failures",
+        "description": "Insufficient logging and monitoring, coupled with missing or ineffective integration with incident response, allows attackers to further attack systems and maintain persistence.",
+        "solution": "Ensure all login, access control, and server-side input validation failures are logged. Establish effective monitoring and alerting.",
+        "confidence": "Medium"
+      }
+    ],
+    "vulnerability_count": 4,
+    "scanned_by": "lithes-coder_github"
+  },
+  {
+    "scan_id": "3f1278dc-737c-4b1c-96b2-7766aae02b6c",
+    "target_url": "https://www.w3schools.com",
+    "timestamp": "2026-08-08T11:49:44.468511",
+    "status": "completed",
+    "vulnerabilities": [
+      {
+        "id": "VULN-4287",
+        "name": "Cross-Site Scripting (XSS)",
+        "severity": "High",
+        "type": "XSS",
+        "url": "https://www.w3schools.com",
+        "parameter": "name",
+        "evidence": "Input reflected without sanitization: <script>alert('xss')</script>",
+        "description": "XSS vulnerabilities allow attackers to inject malicious scripts into web pages viewed by other users.",
+        "solution": "Implement proper input validation and output encoding. Use Content Security Policy (CSP) headers.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-9123",
+        "name": "Cross-Site Request Forgery (CSRF)",
+        "severity": "Medium",
+        "type": "CSRF",
+        "url": "https://www.w3schools.com",
+        "parameter": "input",
+        "evidence": "Form submission lacks anti-CSRF token",
+        "description": "CSRF attacks force authenticated users to submit requests to a web application against which they are currently authenticated.",
+        "solution": "Implement CSRF tokens in forms. Use SameSite cookie attributes. Validate Referer and Origin headers.",
+        "confidence": "Medium"
+      },
+      {
+        "id": "VULN-3490",
+        "name": "Insecure Deserialization",
+        "severity": "Critical",
+        "type": "Insecure Deserialization",
+        "url": "https://www.w3schools.com",
+        "parameter": "data",
+        "evidence": "User-controlled data passed to unserialize() function",
+        "description": "Insecure deserialization often leads to remote code execution. Even if it doesn't result in RCE, it can be used to perform replay attacks or privilege escalation.",
+        "solution": "Avoid deserializing untrusted data. Implement integrity checks. Use serialization formats that only permit primitive data types.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-4049",
+        "name": "Missing Security Headers",
+        "severity": "Low",
+        "type": "Security Misconfiguration",
+        "url": "https://www.w3schools.com",
+        "parameter": "data",
+        "evidence": "Missing X-Frame-Options header in HTTP response",
+        "description": "Security headers add an extra layer of protection by helping to mitigate attacks and security vulnerabilities.",
+        "solution": "Implement security headers including X-Frame-Options, X-Content-Type-Options, Content-Security-Policy, and Strict-Transport-Security.",
+        "confidence": "High"
+      },
+      {
+        "id": "VULN-7777",
+        "name": "SQL Injection",
+        "severity": "Critical",
+        "type": "Injection",
+        "url": "https://www.w3schools.com",
+        "parameter": "category",
+        "evidence": "Parameter 'id' is vulnerable: id=1' OR '1'='1",
+        "description": "SQL Injection allows attackers to execute arbitrary SQL commands in the database. This can lead to data theft, modification, or deletion.",
+        "solution": "Use parameterized queries or prepared statements. Never concatenate user input directly into SQL queries.",
+        "confidence": "High"
+      }
+    ],
+    "vulnerability_count": 5,
+    "scanned_by": "lithesh_.s_google"
+  }
+]

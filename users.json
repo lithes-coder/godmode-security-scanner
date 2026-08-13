@@ -1,0 +1,67 @@
+{
+  "admin": {
+    "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "admin",
+    "email": "admin@security.local",
+    "created_at": "2026-07-17T10:15:22.238324",
+    "active": true
+  },
+  "tester": {
+    "password": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae",
+    "role": "user",
+    "email": "tester@security.local",
+    "created_at": "2026-07-17T10:15:22.238324",
+    "active": true
+  },
+  "lithesh": {
+    "password": "554938e3643521b403ec2abdee97bd56cd061de86bdc40055b62545efad5d5ee",
+    "role": "admin",
+    "email": "litheshs2007@gmail.com",
+    "created_at": "2026-07-17T10:18:06.580226",
+    "active": true
+  },
+  "lithesh_.s_google": {
+    "email": "litheshs2007@gmail.com",
+    "name": "Lithesh .S",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIAZyjj5a6ZV2bMeZif36c4ZbpyFg0uYhqwCN8KUWHv2Zfs_DM=s96-c",
+    "oauth_provider": "google",
+    "oauth_id": "109027451858594341082",
+    "role": "admin",
+    "active": true,
+    "created_at": "2026-07-19T12:05:25.852049",
+    "last_login": "2026-08-11T22:05:39.110092"
+  },
+  "lithes-coder_github": {
+    "email": "litheshs2007@gmail.com",
+    "name": "lithes-coder",
+    "avatar": "https://avatars.githubusercontent.com/u/242837311?v=4",
+    "oauth_provider": "github",
+    "oauth_id": "242837311",
+    "role": "admin",
+    "active": true,
+    "created_at": "2026-07-19T12:13:45.276172",
+    "last_login": "2026-08-02T13:19:41.208388"
+  },
+  "pikachu_26_google": {
+    "email": "slithesh002@gmail.com",
+    "name": "Pikachu 26",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLhjOrnGMQGlBtXa-Sq4k__NCcVLWMyG8z818UchDmSc62kuQ=s96-c",
+    "oauth_provider": "google",
+    "oauth_id": "109567586172767964209",
+    "role": "user",
+    "active": true,
+    "created_at": "2026-08-02T12:22:32.830560",
+    "last_login": "2026-08-02T12:22:32.831542"
+  },
+  "lithesh_s_google": {
+    "email": "sit24it053@sairamtap.edu.in",
+    "name": "LITHESH S",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLc9lElHNm0NTAQ7DK6VvC8asTVbmMQYH8YjDDUKJtaGA--XQ=s96-c",
+    "oauth_provider": "google",
+    "oauth_id": "110115609576369562538",
+    "role": "user",
+    "active": true,
+    "created_at": "2026-08-09T08:51:17.749242",
+    "last_login": "2026-08-09T08:51:17.749242"
+  }
+}
