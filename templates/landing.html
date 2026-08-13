@@ -1,0 +1,770 @@
+{% extends "base.html" %}
+
+{% block title %}GODMODE - Professional Security Testing Platform{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+        text-align: center;
+        padding: 80px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        background: rgba(255, 0, 60, 0.1);
+        border: 1px solid var(--accent-red);
+        border-radius: 50px;
+        color: var(--accent-red);
+        font-size: 0.85em;
+        font-family: 'Orbitron', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+    }
+
+    .hero-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 3.5em;
+        font-weight: 900;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+    }
+
+    .hero-title span {
+        color: var(--accent-red);
+        text-shadow: 0 0 30px var(--accent-red-glow);
+    }
+
+    .hero-subtitle {
+        font-size: 1.3em;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+    }
+
+    .hero-cta {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-large {
+        padding: 18px 40px;
+        font-size: 1.1em;
+    }
+
+    /* ===== ABOUT SECTION ===== */
+    .about-section {
+        padding: 80px 20px;
+        background: rgba(17, 17, 26, 0.5);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-label {
+        color: var(--accent-red);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .section-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+    }
+
+    .section-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1em;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .about-card {
+        background: rgba(10, 10, 18, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .about-card:hover {
+        border-color: var(--accent-red);
+        box-shadow: 0 0 30px var(--accent-red-glow);
+        transform: translateY(-5px);
+    }
+
+    .about-icon {
+        font-size: 3em;
+        margin-bottom: 20px;
+    }
+
+    .about-card h3 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+        font-size: 1.2em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .about-card p {
+        color: var(--text-secondary);
+        font-size: 0.95em;
+        line-height: 1.6;
+    }
+
+    /* ===== FEATURES SECTION ===== */
+    .features-section {
+        padding: 80px 20px;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        background: rgba(17, 17, 26, 0.8);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 35px;
+        display: flex;
+        gap: 20px;
+        transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+        border-color: var(--accent-cyan);
+        box-shadow: 0 0 30px var(--accent-cyan-glow);
+    }
+
+    .feature-icon-wrap {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 0, 60, 0.1);
+        border: 1px solid var(--accent-red);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8em;
+        flex-shrink: 0;
+    }
+
+    .feature-content h3 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+        font-size: 1.1em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .feature-content p {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+        line-height: 1.5;
+    }
+
+    /* ===== PARTNERS SECTION ===== */
+    .partners-section {
+        padding: 60px 20px;
+        background: rgba(10, 10, 18, 0.5);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .partners-grid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 50px;
+        flex-wrap: wrap;
+        max-width: 1000px;
+        margin: 40px auto 0;
+        opacity: 0.6;
+    }
+
+    .partner-logo {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5em;
+        color: var(--text-muted);
+        padding: 20px 30px;
+        border: 2px dashed var(--border-color);
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+
+    .partner-logo:hover {
+        border-color: var(--accent-cyan);
+        color: var(--accent-cyan);
+        opacity: 1;
+    }
+
+    /* ===== CONTACT SECTION ===== */
+    .contact-section {
+        padding: 80px 20px;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        max-width: 1100px;
+        margin: 0 auto;
+        align-items: start;
+    }
+
+    .contact-info h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .contact-info p {
+        color: var(--text-secondary);
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .contact-links {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .contact-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 15px;
+        background: rgba(10, 10, 18, 0.5);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .contact-link:hover {
+        border-color: var(--accent-red);
+        color: var(--text-primary);
+    }
+
+    .contact-link-icon {
+        font-size: 1.5em;
+    }
+
+    .contact-form-wrap {
+        background: rgba(17, 17, 26, 0.8);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 40px;
+    }
+
+    .contact-form-wrap h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.3em;
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-size: 0.85em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        background: rgba(10, 10, 18, 0.8);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 1em;
+        font-family: 'Share Tech Mono', monospace;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--accent-red);
+        box-shadow: 0 0 15px var(--accent-red-glow);
+    }
+
+    .form-message {
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: none;
+        font-size: 0.9em;
+    }
+
+    .form-message.success {
+        display: block;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        color: var(--success);
+    }
+
+    .form-message.error {
+        display: block;
+        background: rgba(255, 0, 60, 0.1);
+        border: 1px solid rgba(255, 0, 60, 0.3);
+        color: var(--error);
+    }
+
+    /* ===== FOOTER ===== */
+    .landing-footer {
+        background: rgba(5, 0, 8, 0.95);
+        border-top: 1px solid var(--border-color);
+        padding: 60px 20px 30px;
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr repeat(3, 1fr);
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto 40px;
+    }
+
+    .footer-brand h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5em;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+    }
+
+    .footer-brand h3 span {
+        color: var(--accent-red);
+    }
+
+    .footer-brand p {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+        line-height: 1.6;
+    }
+
+    .footer-links h4 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.9em;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .footer-links a {
+        display: block;
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 0;
+        font-size: 0.9em;
+        transition: all 0.3s;
+    }
+
+    .footer-links a:hover {
+        color: var(--accent-red);
+        padding-left: 5px;
+    }
+
+    .footer-bottom {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .footer-bottom p {
+        color: var(--text-muted);
+        font-size: 0.85em;
+    }
+
+    .footer-social {
+        display: flex;
+        gap: 15px;
+    }
+
+    .footer-social a {
+        width: 40px;
+        height: 40px;
+        background: rgba(10, 10, 18, 0.8);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 1.2em;
+        transition: all 0.3s;
+    }
+
+    .footer-social a:hover {
+        border-color: var(--accent-red);
+        color: var(--accent-red);
+        box-shadow: 0 0 15px var(--accent-red-glow);
+    }
+
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2em;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .footer-grid {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .footer-bottom {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- NAVIGATION BAR FOR LANDING PAGE -->
+{% if session.get('username') %}
+<nav class="navbar" style="position: relative; margin-bottom: 20px;">
+    <div class="navbar-brand">
+        <span>CYBERSEC</span>
+    </div>
+    <div class="nav-links">
+        <a href="/">Dashboard</a>
+        <a href="/scan">New Scan</a>
+        <a href="/history">History</a>
+        <a href="#about">About</a>
+        <a href="#features">Features</a>
+        <a href="#contact">Contact</a>
+        {% if session.get('role') == 'admin' %}
+        <a href="/admin/users">Admin</a>
+        {% endif %}
+        <div class="user-info">
+            <span class="role">{{ session.get('role', 'USER') }}</span>
+            <span class="username">{{ session.get('username') }}</span>
+        </div>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+</nav>
+{% endif %}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-badge">🔒 Enterprise Security Platform</div>
+    <h1 class="hero-title"><span>GOD</span>MODE</h1>
+    <p class="hero-subtitle">Professional security testing automation platform. Detect vulnerabilities, generate reports, and secure your applications with OWASP ZAP integration.</p>
+    <div class="hero-cta">
+        {% if session.get('username') %}
+        <a href="/" class="btn btn-primary btn-large">📊 Go to Dashboard</a>
+        <a href="/scan" class="btn btn-secondary btn-large">🚀 New Scan</a>
+        {% else %}
+        <a href="/godmode" class="btn btn-primary btn-large">🔓 Login / Register</a>
+        <a href="#features" class="btn btn-secondary btn-large">📋 Explore Features</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section class="about-section" id="about">
+    <div class="section-header">
+        <span class="section-label">About Us</span>
+        <h2 class="section-title">What is GODMODE?</h2>
+        <p class="section-subtitle">A comprehensive security testing platform designed for modern development teams</p>
+    </div>
+    <div class="about-grid">
+        <div class="about-card">
+            <div class="about-icon">🎯</div>
+            <h3>Problem We Solve</h3>
+            <p>Manual security testing is time-consuming and often misses critical vulnerabilities. Teams need automated, reliable security scanning integrated into their workflow.</p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">👥</div>
+            <h3>Who It's For</h3>
+            <p>Security researchers, development teams, QA engineers, and organizations who need to ensure their applications are secure before deployment.</p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">⚡</div>
+            <h3>Why Choose Us</h3>
+            <p>Powered by OWASP ZAP, GODMODE provides enterprise-grade vulnerability detection with professional reporting and real-time monitoring.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features-section" id="features">
+    <div class="section-header">
+        <span class="section-label">Features</span>
+        <h2 class="section-title">Powerful Capabilities</h2>
+        <p class="section-subtitle">Everything you need for comprehensive security testing</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon-wrap">🔍</div>
+            <div class="feature-content">
+                <h3>Automated Scanning</h3>
+                <p>Run comprehensive vulnerability scans with OWASP ZAP integration. Detect SQL injection, XSS, CSRF, and more automatically.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon-wrap">📊</div>
+            <div class="feature-content">
+                <h3>Detailed Reports</h3>
+                <p>Generate professional PDF reports with vulnerability details, risk ratings, CVSS scores, and step-by-step remediation guidance.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon-wrap">⚡</div>
+            <div class="feature-content">
+                <h3>Real-time Monitoring</h3>
+                <p>Track scan progress in real-time with live updates, detailed logging, and status notifications as vulnerabilities are discovered.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon-wrap">🔐</div>
+            <div class="feature-content">
+                <h3>OAuth Integration</h3>
+                <p>Secure authentication with Google and GitHub OAuth. Role-based access control with admin and user permissions.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon-wrap">📱</div>
+            <div class="feature-content">
+                <h3>Responsive Design</h3>
+                <p>Access your security dashboard from any device. Fully responsive interface optimized for desktop, tablet, and mobile.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon-wrap">🛡️</div>
+            <div class="feature-content">
+                <h3>Admin Panel</h3>
+                <p>Professional admin dashboard for user management, scan monitoring, and system configuration with detailed analytics.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PARTNERS SECTION -->
+<section class="partners-section" id="partners">
+    <div class="section-header">
+        <span class="section-label">Integrations</span>
+        <h2 class="section-title">Partner Ecosystem</h2>
+        <p class="section-subtitle">Integrating with industry-leading security tools</p>
+    </div>
+    <div class="partners-grid">
+        <div class="partner-logo">OWASP ZAP</div>
+        <div class="partner-logo">Coming Soon</div>
+        <div class="partner-logo">Coming Soon</div>
+    </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="contact-section" id="contact">
+    <div class="section-header">
+        <span class="section-label">Contact</span>
+        <h2 class="section-title">Get In Touch</h2>
+        <p class="section-subtitle">Have questions? We'd love to hear from you</p>
+    </div>
+    <div class="contact-grid">
+        <div class="contact-info">
+            <h3>Developer Info</h3>
+            <p>Built with passion for security. Connect with us for support, feature requests, or collaboration opportunities.</p>
+            <div class="contact-links">
+                <a href="https://github.com" target="_blank" class="contact-link">
+                    <span class="contact-link-icon">💻</span>
+                    <span>GitHub Repository</span>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="contact-link">
+                    <span class="contact-link-icon">🔗</span>
+                    <span>LinkedIn Profile</span>
+                </a>
+                <a href="mailto:litheshs2007@gmail.com" class="contact-link">
+                    <span class="contact-link-icon">📧</span>
+                    <span>litheshs2007@gmail.com</span>
+                </a>
+            </div>
+        </div>
+        <div class="contact-form-wrap">
+            <h3>Send Message</h3>
+            <div id="formMessage" class="form-message"></div>
+            <form id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Your phone" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="your@email.com" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Request Support</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="landing-footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <h3><span>GOD</span>MODE</h3>
+            <p>Professional security testing automation platform. Protect your applications with enterprise-grade vulnerability scanning.</p>
+        </div>
+        <div class="footer-links">
+            <h4>Product</h4>
+            <a href="#features">Features</a>
+            {% if session.get('username') %}
+            <a href="/">Dashboard</a>
+            <a href="/scan">Security Scan</a>
+            <a href="/history">History</a>
+            {% else %}
+            <a href="/godmode">Get Started</a>
+            {% endif %}
+        </div>
+        <div class="footer-links">
+            <h4>Company</h4>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <a href="#partners">Partners</a>
+        </div>
+        <div class="footer-links">
+            <h4>Legal</h4>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Security</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 GODMODE Security Scanner. All rights reserved.</p>
+        <div class="footer-social">
+            <a href="https://github.com" target="_blank" title="GitHub">⚡</a>
+            <a href="https://linkedin.com" target="_blank" title="LinkedIn">🔗</a>
+                <a href="mailto:litheshs2007@gmail.com" title="Email">✉</a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Contact Form Handler - Opens email client
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        
+        const subject = encodeURIComponent('Support Request from ' + name);
+        const body = encodeURIComponent(
+            'Name: ' + name + '\n' +
+            'Phone: ' + phone + '\n' +
+            'Email: ' + email + '\n\n' +
+            'Message: (Please describe your issue here)'
+        );
+        
+        window.location.href = 'mailto:litheshs2007@gmail.com?subject=' + subject + '&body=' + body;
+        
+        // Show success message
+        const formMessage = document.getElementById('formMessage');
+        formMessage.className = 'form-message success';
+        formMessage.textContent = 'Opening your email client...';
+        
+        setTimeout(() => {
+            formMessage.className = 'form-message';
+            formMessage.textContent = '';
+        }, 3000);
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

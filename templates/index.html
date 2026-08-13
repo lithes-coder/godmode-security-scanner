@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Cyberpunk Security Scanner{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Welcome Banner */
+    .welcome-banner {
+        background: rgba(10, 10, 20, 0.6);
+        padding: 50px;
+        border-radius: 10px;
+        margin-bottom: 40px;
+        border: 1px solid var(--accent-red);
+        box-shadow: 0 0 40px rgba(255, 0, 60, 0.2), inset 0 0 30px rgba(255, 0, 60, 0.05);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        backdrop-filter: blur(5px);
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+        animation: scanline 3s linear infinite;
+    }
+
+    @keyframes scanline {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .welcome-banner h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 5px;
+    }
+
+    .welcome-banner h1 span {
+        color: var(--accent-red);
+        text-shadow: 0 0 30px var(--accent-red-glow);
+    }
+
+    .welcome-banner p {
+        font-size: 1.1em;
+        color: var(--text-secondary);
+        letter-spacing: 2px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: rgba(17, 17, 26, 0.8);
+        border-radius: 10px;
+        padding: 35px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(5px);
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-red);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 30px var(--accent-red-glow);
+    }
+
+    .stat-card:hover::after {
+        background: var(--accent-red);
+        box-shadow: 0 0 10px var(--accent-red);
+    }
+
+    .stat-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+        text-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+
+    .stat-number {
+        font-size: 2.8em;
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .stat-card:nth-child(1) .stat-number { color: var(--accent-cyan); text-shadow: 0 0 20px var(--accent-cyan-glow); }
+    .stat-card:nth-child(2) .stat-number { color: var(--accent-red); text-shadow: 0 0 20px var(--accent-red-glow); }
+    .stat-card:nth-child(3) .stat-number { color: #ff6b7a; text-shadow: 0 0 20px rgba(255, 107, 122, 0.3); }
+    .stat-card:nth-child(4) .stat-number { color: var(--success); text-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .action-card {
+        background: rgba(17, 17, 26, 0.8);
+        border-radius: 10px;
+        padding: 40px;
+        border: 1px solid var(--border-color);
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        backdrop-filter: blur(5px);
+    }
+
+    .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 0, 60, 0.1) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-red);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4), 0 0 40px var(--accent-red-glow);
+    }
+
+    .action-card:hover::before {
+        opacity: 1;
+    }
+
+    .action-icon {
+        font-size: 4em;
+        margin-bottom: 25px;
+        display: block;
+    }
+
+    .action-card h3 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+        font-size: 1.4em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .action-card p {
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Recent Scans */
+    .recent-scans {
+        background: rgba(17, 17, 26, 0.8);
+        border-radius: 10px;
+        padding: 35px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(5px);
+    }
+
+    .recent-scans h2 {
+        font-family: 'Orbitron', sans-serif;
+        margin-bottom: 30px;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 1.5em;
+    }
+
+    .recent-scans h2 span {
+        color: var(--accent-red);
+    }
+
+    .scan-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .scan-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px;
+        background: rgba(10, 10, 18, 0.5);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
+    }
+
+    .scan-item:hover {
+        border-color: var(--accent-red);
+        box-shadow: 0 0 20px var(--accent-red-glow);
+        transform: translateX(5px);
+    }
+
+    .scan-info h4 {
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 1.1em;
+        font-family: 'Share Tech Mono', monospace;
+    }
+
+    .scan-info h4 a {
+        color: var(--accent-cyan);
+        text-decoration: none;
+    }
+
+    .scan-info h4 a:hover {
+        text-shadow: 0 0 10px var(--accent-cyan-glow);
+    }
+
+    .scan-info .meta {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+        font-size: 0.8em;
+        color: var(--text-muted);
+        font-family: 'Share Tech Mono', monospace;
+    }
+
+    .scan-stats {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .vuln-badge {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: bold;
+        border: 1px solid;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .vuln-badge.critical {
+        background: rgba(220, 53, 69, 0.15);
+        color: #ff6b7a;
+        border-color: rgba(220, 53, 69, 0.5);
+        box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+    }
+
+    .vuln-badge.high {
+        background: rgba(253, 126, 20, 0.15);
+        color: #ffb366;
+        border-color: rgba(253, 126, 20, 0.5);
+    }
+
+    .vuln-badge.medium {
+        background: rgba(255, 193, 7, 0.15);
+        color: #ffe066;
+        border-color: rgba(255, 193, 7, 0.5);
+    }
+
+    .vuln-badge.low {
+        background: rgba(40, 167, 69, 0.15);
+        color: #6bcf7f;
+        border-color: rgba(40, 167, 69, 0.5);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+        font-size: 5em;
+        margin-bottom: 25px;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        font-family: 'Orbitron', sans-serif;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 4px;
+        font-size: 0.75em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-left: 10px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .role-badge.admin {
+        background: rgba(255, 0, 60, 0.2);
+        color: var(--accent-red);
+        border: 1px solid var(--accent-red);
+    }
+
+    .role-badge.user {
+        background: rgba(0, 240, 255, 0.1);
+        color: var(--accent-cyan);
+        border: 1px solid var(--accent-cyan);
+    }
+
+    .view-btn {
+        padding: 8px 20px;
+        background: rgba(0, 240, 255, 0.1);
+        color: var(--accent-cyan);
+        border: 1px solid rgba(0, 240, 255, 0.3);
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.85em;
+        font-family: 'Orbitron', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+    }
+
+    .view-btn:hover {
+        background: rgba(0, 240, 255, 0.2);
+        box-shadow: 0 0 15px var(--accent-cyan-glow);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="welcome-banner">
+    <h1 class="glitch-text" data-text="⚡ SYSTEM ONLINE">⚡ <span>SYSTEM</span> ONLINE</h1>
+    <p>Welcome back, {{ username }} <span class="role-badge {{ role }}">{{ role }}</span></p>
+    <p style="margin-top: 10px; font-size: 0.9em; color: var(--accent-cyan);">Security Testing Automation Platform</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-number">{{ total_scans }}</div>
+        <div class="stat-label">Total Scans</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🐛</div>
+        <div class="stat-number">{{ total_vulns }}</div>
+        <div class="stat-label">Vulnerabilities</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-number">{{ critical_count }}</div>
+        <div class="stat-label">Critical Issues</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-number">{{ history|length }}</div>
+        <div class="stat-label">Reports</div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="/scan" class="action-card">
+        <span class="action-icon">🚀</span>
+        <h3>Initiate Scan</h3>
+        <p>Launch automated vulnerability assessment</p>
+        <button class="btn btn-primary">Initialize</button>
+    </a>
+    <a href="/history" class="action-card">
+        <span class="action-icon">📋</span>
+        <h3>Access Archives</h3>
+        <p>Review historical scan data and reports</p>
+        <button class="btn btn-secondary">Access Data</button>
+    </a>
+</div>
+
+<div class="recent-scans">
+    <h2><span>Recent Operations</span></h2>
+    {% if history %}
+    <div class="scan-list">
+        {% for scan in history[:5] %}
+        <div class="scan-item">
+            <div class="scan-info">
+                <h4><a href="{{ scan.target_url }}" target="_blank">{{ scan.target_url }}</a></h4>
+                <div class="meta">
+                    <span>ID: {{ scan.scan_id }}</span>
+                    <span>|</span>
+                    <span>{{ scan.timestamp[:10] }} {{ scan.timestamp[11:16] }}</span>
+                    {% if role == 'admin' %}
+                    <span>|</span>
+                    <span>By: {{ scan.scanned_by }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="scan-stats">
+                {% set vuln_count = scan.get('vulnerability_count', scan.vulnerabilities|length if scan.vulnerabilities is defined else 0) %}
+                {% if vuln_count > 0 %}
+                    {% if vuln_count >= 5 %}
+                    <span class="vuln-badge critical">{{ vuln_count }} Critical</span>
+                    {% elif vuln_count >= 3 %}
+                    <span class="vuln-badge high">{{ vuln_count }} High</span>
+                    {% elif vuln_count >= 1 %}
+                    <span class="vuln-badge medium">{{ vuln_count }} Medium</span>
+                    {% endif %}
+                {% else %}
+                <span class="vuln-badge low">Secure</span>
+                {% endif %}
+                <a href="/report/{{ scan.scan_id }}" class="view-btn">View</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if history|length > 5 %}
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/history" class="btn btn-secondary">View All Scans</a>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3>No Data Available</h3>
+        <p>Initiate your first security scan to populate the database</p>
+        <a href="/scan" class="btn btn-primary" style="margin-top: 20px;">Start Scan</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

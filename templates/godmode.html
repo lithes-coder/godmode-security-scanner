@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GODMODE - Cyberpunk Security Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #050008;
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        /* Background Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        /* Particle Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        /* Smoky Fog Layers */
+        .smoke-layer {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+        }
+        
+        .smoke-1 {
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.08) 0%, transparent 70%);
+            bottom: -200px;
+            left: -100px;
+            animation: drift1 15s ease-in-out infinite alternate;
+        }
+        
+        .smoke-2 {
+            width: 600px;
+            height: 800px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.05) 0%, transparent 70%);
+            bottom: -300px;
+            right: -100px;
+            animation: drift2 18s ease-in-out infinite alternate;
+        }
+        
+        .smoke-3 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: drift3 12s ease-in-out infinite alternate;
+        }
+        
+        .smoke-4 {
+            width: 700px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%);
+            top: 20%;
+            left: -200px;
+            animation: drift4 20s ease-in-out infinite alternate;
+        }
+        
+        .smoke-5 {
+            width: 400px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.05) 0%, transparent 70%);
+            top: 30%;
+            right: -150px;
+            animation: drift5 16s ease-in-out infinite alternate;
+        }
+        
+        @keyframes drift1 {
+            0% { transform: translateX(0) translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateX(50px) translateY(-30px) scale(1.1); opacity: 0.6; }
+        }
+        
+        @keyframes drift2 {
+            0% { transform: translateX(0) translateY(0) scale(1); opacity: 0.7; }
+            100% { transform: translateX(-40px) translateY(20px) scale(1.15); opacity: 0.5; }
+        }
+        
+        @keyframes drift3 {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+            100% { transform: translate(-45%, -55%) scale(1.2); opacity: 0.6; }
+        }
+        
+        @keyframes drift4 {
+            0% { transform: translateX(0) scale(1); opacity: 0.6; }
+            100% { transform: translateX(80px) scale(1.1); opacity: 0.4; }
+        }
+        
+        @keyframes drift5 {
+            0% { transform: translateX(0) translateY(0) scale(1); opacity: 0.7; }
+            100% { transform: translateX(-30px) translateY(40px) scale(1.08); opacity: 0.5; }
+        }
+        
+        /* Scan Line */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff003c, transparent);
+            box-shadow: 0 0 20px #ff003c, 0 0 40px #ff003c;
+            animation: scanSweep 4s linear infinite;
+            z-index: 30;
+        }
+        
+        @keyframes scanSweep {
+            0% { top: 0; opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        
+        /* Pulsing Ring */
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            border: 2px solid rgba(255, 0, 60, 0.3);
+            border-radius: 50%;
+            animation: pulseExpand 3s ease-out infinite;
+            z-index: 40;
+        }
+        
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            border-radius: 50%;
+            animation: pulseExpand 3s ease-out infinite 0.5s;
+        }
+        
+        .pulse-ring::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            border: 1px solid rgba(255, 0, 60, 0.15);
+            border-radius: 50%;
+            animation: pulseExpand 3s ease-out infinite 1s;
+        }
+        
+        @keyframes pulseExpand {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+        }
+        
+        /* Glitch Text */
+        .glitch {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                0 0 10px #ff003c,
+                0 0 20px #ff003c,
+                0 0 40px #ff003c;
+            position: relative;
+            animation: glitchSkew 3s infinite;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: 'GODMODE';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            color: #ff003c;
+            animation: glitch1 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+        }
+        
+        .glitch::after {
+            color: #00f0ff;
+            animation: glitch2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+        }
+        
+        /* Special O - Glowing Cyan Eye */
+        .god-o {
+            color: #00f0ff !important;
+            text-shadow: 
+                0 0 10px #00f0ff,
+                0 0 30px #00f0ff,
+                0 0 60px #00f0ff,
+                0 0 100px rgba(0, 240, 255, 0.5) !important;
+            animation: eyePulse 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        @keyframes eyePulse {
+            0%, 100% { 
+                text-shadow: 0 0 10px #00f0ff, 0 0 30px #00f0ff, 0 0 60px #00f0ff;
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 0 0 20px #00f0ff, 0 0 50px #00f0ff, 0 0 100px #00f0ff, 0 0 150px rgba(0, 240, 255, 0.3);
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Special D - Blood Red with flicker */
+        .god-d {
+            color: #ff003c !important;
+            text-shadow: 
+                0 0 10px #ff003c,
+                0 0 30px #ff003c,
+                0 0 60px #ff003c !important;
+            animation: bloodFlicker 0.15s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes bloodFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes glitch1 {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(-3px, 1px); }
+            40% { transform: translate(3px, -1px); }
+            60% { transform: translate(-2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+        
+        @keyframes glitch2 {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(3px, -1px); }
+            40% { transform: translate(-3px, 1px); }
+            60% { transform: translate(2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+        }
+        
+        @keyframes glitchSkew {
+            0%, 90%, 100% { transform: skew(0deg); }
+            20% { transform: skew(-2deg); }
+            40% { transform: skew(2deg); }
+            60% { transform: skew(-1deg); }
+            80% { transform: skew(1deg); }
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.5);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .dot-red { background: #ff003c; box-shadow: 0 0 10px #ff003c; }
+        .dot-green { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        .dot-blue { background: #00f0ff; box-shadow: 0 0 10px #00f0ff; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* OAuth Buttons - Integrated Login */
+        .oauth-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .oauth-title {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .oauth-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 280px;
+            padding: 14px 24px;
+            margin: 0 auto 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        
+        .oauth-btn-google {
+            background: #ffffff;
+            color: #111;
+            border-color: #fff;
+        }
+        
+        .oauth-btn-google:hover {
+            background: transparent;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        .oauth-btn-github {
+            background: #24292e;
+            color: #fff;
+            border-color: #24292e;
+        }
+        
+        .oauth-btn-github:hover {
+            background: transparent;
+            border-color: #00f0ff;
+            color: #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        
+        /* Main Action Buttons */
+        .cyber-btn {
+            position: relative;
+            padding: 16px 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #fff;
+            background: transparent;
+            border: 2px solid #ff003c;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cyber-btn:hover {
+            background: #ff003c;
+            box-shadow: 0 0 30px #ff003c, inset 0 0 20px rgba(255,0,60,0.3);
+        }
+        
+        .cyber-btn.secondary {
+            border-color: #00f0ff;
+        }
+        
+        .cyber-btn.secondary:hover {
+            background: #00f0ff;
+            box-shadow: 0 0 30px #00f0ff, inset 0 0 20px rgba(0,240,255,0.3);
+            color: #000;
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* Footer */
+        .footer-text {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+        }
+        
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash-message {
+            padding: 12px 20px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .flash-success {
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid rgba(0, 255, 136, 0.4);
+            color: #00ff88;
+        }
+        
+        .flash-error {
+            background: rgba(255, 0, 60, 0.15);
+            border: 1px solid rgba(255, 0, 60, 0.4);
+            color: #ff003c;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Grid -->
+    <div class="grid-bg"></div>
+    
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+    
+    <!-- Smoky Fog Layers -->
+    <div class="smoke-layer smoke-1"></div>
+    <div class="smoke-layer smoke-2"></div>
+    <div class="smoke-layer smoke-3"></div>
+    <div class="smoke-layer smoke-4"></div>
+    <div class="smoke-layer smoke-5"></div>
+    
+    <!-- Scan Line -->
+    <div class="scan-line"></div>
+    
+    <!-- Pulsing Ring -->
+    <div class="pulse-ring"></div>
+    
+    <!-- Main Content -->
+    <div class="relative z-50 min-h-screen flex flex-col items-center justify-center px-4">
+        <div class="text-center">
+            <!-- Glitch Title -->
+            <h1 class="glitch mb-6" data-text="GODMODE">G<span class="god-o">O</span><span class="god-d">D</span>MODE</h1>
+            
+            <!-- Status Badges -->
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <div class="status-badge">
+                    <span class="status-dot dot-red"></span>
+                    <span>THREAT LEVEL: CRITICAL</span>
+                </div>
+                <div class="status-badge">
+                    <span class="status-dot dot-green"></span>
+                    <span>OVERRIDE: ACTIVE</span>
+                </div>
+                <div class="status-badge">
+                    <span class="status-dot dot-blue"></span>
+                    <span>NODE: CONNECTED</span>
+                </div>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            {% if not session.get('username') %}
+            <!-- NOT LOGGED IN - Show Login Options -->
+            <div class="oauth-section" style="border: 1px solid rgba(255,0,60,0.3); background: rgba(255,0,60,0.05); padding: 30px; border-radius: 8px;">
+                <p class="oauth-title" style="color: #ff003c; margin-bottom: 20px;">⚠ AUTHENTICATION REQUIRED</p>
+                <p style="color: rgba(255,255,255,0.6); margin-bottom: 25px; font-size: 0.9rem;">Sign in to access the security scanner dashboard</p>
+                
+                <a href="/auth/google" class="oauth-btn oauth-btn-google">
+                    <svg class="oauth-icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </a>
+                <a href="/auth/github" class="oauth-btn oauth-btn-github">
+                    <svg class="oauth-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    Continue with GitHub
+                </a>
+                
+                <p style="font-size: 0.7rem; color: rgba(255,255,255,0.3); margin-top: 20px; letter-spacing: 1px;">
+                    🔒 First time? Account auto-creates on login
+                </p>
+            </div>
+            {% else %}
+            <!-- LOGGED IN - Show Action Buttons -->
+            <div class="oauth-section" style="border: 1px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.05); padding: 30px; border-radius: 8px;">
+                <p class="status-badge" style="margin-bottom: 20px; border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.1);">
+                    <span class="status-dot dot-green"></span>
+                    <span>WELCOME BACK, {{ session.get('username', 'USER').upper() }}</span>
+                    <span class="role-badge" style="margin-left: 10px; background: rgba(0,240,255,0.2); color: #00f0ff; padding: 2px 8px; border-radius: 3px; font-size: 0.7rem;">{{ session.get('role', 'USER').upper() }}</span>
+                </p>
+                
+                <div class="flex flex-col gap-3" style="max-width: 280px; margin: 0 auto;">
+                    <a href="/" class="cyber-btn" onclick="createRipple(event, this)">📊 DASHBOARD</a>
+                    <a href="/scan" class="cyber-btn secondary" onclick="createRipple(event, this)">🔍 NEW SCAN</a>
+                    <a href="/history" class="cyber-btn" style="background: transparent; border-color: rgba(255,255,255,0.2);" onclick="createRipple(event, this)">📜 MY REPORTS</a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="/admin/dashboard" class="cyber-btn" style="background: linear-gradient(90deg, #ff003c, #ff6b35); border-color: #ff003c;" onclick="createRipple(event, this)">⚡ ADMIN PANEL</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Footer -->
+        <div class="absolute bottom-8 footer-text">
+            ⚡ UNDER DEVELOPMENT
+        </div>
+    </div>
+    
+    <script>
+        // Particle Rain System
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const particles = [];
+        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.speed = Math.random() * 2 + 1;
+                this.char = chars[Math.floor(Math.random() * chars.length)];
+                this.size = Math.random() * 14 + 10;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                    this.char = chars[Math.floor(Math.random() * chars.length)];
+                }
+            }
+            
+            draw() {
+                ctx.font = `${this.size}px 'Share Tech Mono'`;
+                ctx.fillStyle = `rgba(0, 255, 100, ${this.opacity})`;
+                ctx.fillText(this.char, this.x, this.y);
+            }
+        }
+        
+        // Create particles
+        for (let i = 0; i < 80; i++) {
+            particles.push(new Particle());
+        }
+        
+        function animateParticles() {
+            ctx.fillStyle = 'rgba(5, 0, 8, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+        
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Ripple Effect
+        function createRipple(event, button) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = event.clientX - rect.left - size/2 + 'px';
+            ripple.style.top = event.clientY - rect.top - size/2 + 'px';
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        }
+    </script>
+</body>
+</html>

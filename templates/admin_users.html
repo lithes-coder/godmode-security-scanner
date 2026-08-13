@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - User Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 40px;
+        background: linear-gradient(135deg, rgba(26, 10, 15, 0.9) 0%, rgba(42, 10, 21, 0.9) 100%);
+        border-radius: 15px;
+        border: 1px solid var(--accent-red);
+        box-shadow: 0 0 40px var(--accent-red-glow);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .admin-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+        animation: scanline 3s linear infinite;
+    }
+    
+    @keyframes scanline {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    .admin-header h1 {
+        font-size: 2.2em;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+    }
+    
+    .admin-header h1 span {
+        color: var(--accent-red);
+        text-shadow: 0 0 30px var(--accent-red-glow);
+    }
+    
+    .admin-header p {
+        color: var(--text-secondary);
+        letter-spacing: 2px;
+    }
+    
+    .admin-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+    }
+    
+    .create-user-card {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 35px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        height: fit-content;
+    }
+    
+    .create-user-card h3 {
+        color: var(--accent-red);
+        margin-bottom: 25px;
+        font-size: 1.2em;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .create-user-card h3::before {
+        content: '';
+        width: 30px;
+        height: 2px;
+        background: var(--accent-red);
+        box-shadow: 0 0 10px var(--accent-red);
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--text-secondary);
+        font-size: 0.85em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 15px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 1em;
+        transition: all 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--accent-red);
+        box-shadow: 0 0 20px var(--accent-red-glow);
+    }
+    
+    .create-btn {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, rgba(255, 0, 60, 0.3) 0%, rgba(255, 0, 60, 0.1) 100%);
+        border: 2px solid var(--accent-red);
+        border-radius: 8px;
+        color: var(--accent-red);
+        font-size: 1.1em;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .create-btn:hover {
+        background: linear-gradient(135deg, rgba(255, 0, 60, 0.5) 0%, rgba(255, 0, 60, 0.2) 100%);
+        box-shadow: 0 0 30px var(--accent-red-glow);
+        transform: translateY(-2px);
+    }
+    
+    .users-table-card {
+        background: var(--bg-card);
+        border-radius: 15px;
+        padding: 35px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    
+    .users-table-card h3 {
+        color: var(--accent-red);
+        margin-bottom: 25px;
+        font-size: 1.2em;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .users-table-card h3::before {
+        content: '';
+        width: 30px;
+        height: 2px;
+        background: var(--accent-red);
+        box-shadow: 0 0 10px var(--accent-red);
+    }
+    
+    .users-table {
+        width: 100%;
+    }
+    
+    .table-header {
+        display: grid;
+        grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1.5fr;
+        gap: 15px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .table-header div {
+        color: var(--accent-red);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.8em;
+    }
+    
+    .user-row {
+        display: grid;
+        grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1.5fr;
+        gap: 15px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+        align-items: center;
+        transition: all 0.3s;
+    }
+    
+    .user-row:hover {
+        background: rgba(255, 0, 60, 0.05);
+    }
+    
+    .user-row:last-child {
+        border-bottom: none;
+    }
+    
+    .user-cell {
+        color: var(--text-primary);
+        font-size: 0.95em;
+    }
+    
+    .user-cell.username {
+        font-weight: 600;
+        color: var(--accent-cyan);
+    }
+    
+    .role-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.75em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .role-badge.admin {
+        background: rgba(255, 0, 60, 0.15);
+        color: var(--accent-red);
+        border: 1px solid rgba(255, 0, 60, 0.3);
+    }
+    
+    .role-badge.user {
+        background: rgba(0, 240, 255, 0.1);
+        color: var(--accent-cyan);
+        border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.75em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .status-badge.active {
+        background: rgba(0, 255, 136, 0.15);
+        color: var(--success);
+        border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+    
+    .status-badge.inactive {
+        background: rgba(255, 0, 60, 0.15);
+        color: var(--error);
+        border: 1px solid rgba(255, 0, 60, 0.3);
+    }
+    
+    .user-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .user-btn {
+        padding: 6px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 0.75em;
+        font-weight: 500;
+        transition: all 0.3s;
+        border: 1px solid;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .user-btn.toggle {
+        background: rgba(255, 170, 0, 0.1);
+        color: var(--warning);
+        border-color: rgba(255, 170, 0, 0.3);
+    }
+    
+    .user-btn.toggle:hover {
+        background: rgba(255, 170, 0, 0.2);
+    }
+    
+    .user-btn.delete {
+        background: rgba(255, 0, 60, 0.1);
+        color: var(--error);
+        border-color: rgba(255, 0, 60, 0.3);
+    }
+    
+    .user-btn.delete:hover {
+        background: rgba(255, 0, 60, 0.2);
+        box-shadow: 0 0 10px rgba(255, 0, 60, 0.3);
+    }
+    
+    .user-btn.disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    .current-user {
+        background: rgba(255, 0, 60, 0.1) !important;
+        border-left: 3px solid var(--accent-red);
+    }
+    
+    .warning-box {
+        background: rgba(255, 170, 0, 0.1);
+        border: 1px solid rgba(255, 170, 0, 0.3);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+        color: var(--warning);
+        font-size: 0.9em;
+    }
+    
+    .warning-box strong {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    @media (max-width: 1200px) {
+        .admin-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>⚡ <span>ADMIN</span> CONTROL ⚡</h1>
+    <p>User Management & Access Control</p>
+</div>
+
+<div class="admin-grid">
+    <div class="create-user-card">
+        <h3>Create User</h3>
+        
+        <div class="warning-box">
+            <strong>⚠️ Development Stage</strong>
+            Passwords are hashed with SHA-256. In production, use bcrypt/argon2.
+        </div>
+        
+        <form method="POST" action="/admin/create-user">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter username" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="user@security.local" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter password" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Role</label>
+                <select name="role" required>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="create-btn">
+                ⚡ CREATE USER ⚡
+            </button>
+        </form>
+    </div>
+    
+    <div class="users-table-card">
+        <h3>User Database</h3>
+        
+        <div class="users-table">
+            <div class="table-header">
+                <div>Username</div>
+                <div>Email</div>
+                <div>Role</div>
+                <div>Status</div>
+                <div>Actions</div>
+            </div>
+            
+            {% for username, user in users.items() %}
+            <div class="user-row {% if username == session.get('username') %}current-user{% endif %}">
+                <div class="user-cell username">{{ username }}</div>
+                <div class="user-cell">{{ user.email }}</div>
+                <div class="user-cell">
+                    <span class="role-badge {{ user.role }}">{{ user.role }}</span>
+                </div>
+                <div class="user-cell">
+                    <span class="status-badge {% if user.active %}active{% else %}inactive{% endif %}">
+                        {% if user.active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </div>
+                <div class="user-cell">
+                    <div class="user-actions">
+                        {% if username != session.get('username') %}
+                        <a href="/admin/toggle-user/{{ username }}" class="user-btn toggle">
+                            {% if user.active %}Deactivate{% else %}Activate{% endif %}
+                        </a>
+                        <a href="/admin/delete-user/{{ username }}" class="user-btn delete" 
+                           onclick="return confirm('Delete user {{ username }}? This action cannot be undone.')">
+                            Delete
+                        </a>
+                        {% else %}
+                        <span class="user-btn disabled">Current User</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

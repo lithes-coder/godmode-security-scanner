@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cyberpunk Security Scanner{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #050008;
+            --bg-secondary: #0a0a12;
+            --bg-card: #11111a;
+            --bg-hover: #1a1a28;
+            --accent-red: #ff003c;
+            --accent-red-glow: rgba(255, 0, 60, 0.5);
+            --accent-red-light: #ff3366;
+            --accent-cyan: #00f0ff;
+            --accent-cyan-glow: rgba(0, 240, 255, 0.4);
+            --text-primary: #e0e0e0;
+            --text-secondary: #888;
+            --text-muted: #555;
+            --border-color: #2a2a3a;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --error: #ff003c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', 'Segoe UI', monospace;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* ===== BACKGROUND EFFECTS ===== */
+
+        /* Background Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Matrix Particle Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Smoky Fog Layers */
+        .smoke-layer {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .smoke-1 {
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 70%);
+            bottom: -200px;
+            left: -100px;
+            animation: drift1 15s ease-in-out infinite alternate;
+        }
+
+        .smoke-2 {
+            width: 600px;
+            height: 800px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%);
+            bottom: -300px;
+            right: -100px;
+            animation: drift2 18s ease-in-out infinite alternate;
+        }
+
+        .smoke-3 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.05) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: drift3 12s ease-in-out infinite alternate;
+        }
+
+        .smoke-4 {
+            width: 700px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.03) 0%, transparent 70%);
+            top: 20%;
+            left: -200px;
+            animation: drift4 20s ease-in-out infinite alternate;
+        }
+
+        .smoke-5 {
+            width: 400px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%);
+            top: 30%;
+            right: -150px;
+            animation: drift5 16s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift1 {
+            0% { transform: translateX(0) translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateX(50px) translateY(-30px) scale(1.1); opacity: 0.5; }
+        }
+
+        @keyframes drift2 {
+            0% { transform: translateX(0) translateY(0) scale(1); opacity: 0.7; }
+            100% { transform: translateX(-40px) translateY(20px) scale(1.15); opacity: 0.4; }
+        }
+
+        @keyframes drift3 {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+            100% { transform: translate(-45%, -55%) scale(1.2); opacity: 0.5; }
+        }
+
+        @keyframes drift4 {
+            0% { transform: translateX(0) scale(1); opacity: 0.6; }
+            100% { transform: translateX(80px) scale(1.1); opacity: 0.3; }
+        }
+
+        @keyframes drift5 {
+            0% { transform: translateX(0) translateY(0) scale(1); opacity: 0.7; }
+            100% { transform: translateX(-30px) translateY(40px) scale(1.08); opacity: 0.4; }
+        }
+
+        /* Scan Line */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff003c, transparent);
+            box-shadow: 0 0 20px #ff003c, 0 0 40px #ff003c;
+            animation: scanSweep 4s linear infinite;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        @keyframes scanSweep {
+            0% { top: 0; opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* ===== CURSOR SMOKE SYSTEM ===== */
+        .cursor-smoke-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .smoke-particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: smokeFade 1.5s ease-out forwards;
+        }
+
+        @keyframes smokeFade {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* ===== RED BLITZ LIGHTNING ===== */
+        .blitz-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .blitz-active {
+            opacity: 1;
+        }
+
+        .blitz-flash {
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #ff003c, #ff3366, #ff003c, transparent);
+            opacity: 0;
+            filter: blur(1px);
+            box-shadow: 0 0 10px #ff003c, 0 0 20px #ff003c, 0 0 40px #ff003c;
+        }
+
+        @keyframes blitzStrike {
+            0% { opacity: 0; height: 0; }
+            20% { opacity: 1; }
+            50% { opacity: 1; height: 150px; }
+            80% { opacity: 0.5; }
+            100% { opacity: 0; height: 300px; }
+        }
+
+        .blitz-branch {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(to right, #ff003c, transparent);
+            opacity: 0;
+            filter: blur(1px);
+            box-shadow: 0 0 8px #ff003c;
+            transform-origin: left center;
+        }
+
+        @keyframes blitzBranch {
+            0% { opacity: 0; width: 0; }
+            30% { opacity: 1; width: 80px; }
+            70% { opacity: 0.5; }
+            100% { opacity: 0; width: 150px; }
+        }
+
+        /* Screen flash on blitz */
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at var(--flash-x, 50%) var(--flash-y, 50%), rgba(255,0,60,0.08) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 9996;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .screen-flash.active {
+            opacity: 1;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: linear-gradient(180deg, rgba(10,10,18,0.95) 0%, rgba(5,0,8,0.9) 100%);
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255,0,60,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3em;
+            font-weight: 900;
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 20px var(--accent-red-glow);
+            letter-spacing: 2px;
+        }
+
+        .navbar-brand span {
+            font-size: 1.5em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+            background: rgba(255, 0, 60, 0.1);
+            box-shadow: 0 0 20px var(--accent-red-glow);
+            text-shadow: 0 0 10px var(--accent-red-glow);
+        }
+
+        .nav-links a.active {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+            background: rgba(255, 0, 60, 0.15);
+            box-shadow: 0 0 15px var(--accent-red-glow), inset 0 0 10px rgba(255, 0, 60, 0.1);
+        }
+
+        .nav-links a.locked {
+            color: #666 !important;
+            border: 1px dashed #444 !important;
+            background: rgba(100,100,100,0.05) !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .nav-links a.locked:hover {
+            color: #888 !important;
+            border-color: #666 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-info .role {
+            color: var(--accent-cyan);
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0, 240, 255, 0.1);
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .user-info .username {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .logout-btn {
+            color: var(--error) !important;
+            border-color: var(--error) !important;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 0, 60, 0.2) !important;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: rgba(17, 17, 26, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 0, 60, 0.3);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.6), 0 0 30px rgba(255,0,60,0.05);
+        }
+
+        .card-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header h2 {
+            color: var(--text-primary);
+            font-size: 1.8em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .card-header h2 span {
+            color: var(--accent-red);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: transparent;
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-red);
+            color: #fff;
+            box-shadow: 0 0 30px var(--accent-red-glow), inset 0 0 20px rgba(255,0,60,0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 30px var(--accent-cyan-glow);
+        }
+
+        .btn-success {
+            background: transparent;
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--success);
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: rgba(0, 255, 136, 0.3);
+            color: var(--success);
+        }
+
+        .alert-success::before { background: var(--success); }
+
+        .alert-error {
+            background: rgba(255, 0, 60, 0.1);
+            border-color: rgba(255, 0, 60, 0.3);
+            color: var(--error);
+        }
+
+        .alert-error::before { background: var(--error); }
+
+        .alert-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: rgba(255, 170, 0, 0.3);
+            color: var(--warning);
+        }
+
+        .alert-warning::before { background: var(--warning); }
+
+        /* ===== GLITCH TEXT ===== */
+        .glitch-text {
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch-text::before {
+            color: #ff003c;
+            animation: glitch1 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+        }
+
+        .glitch-text::after {
+            color: #00f0ff;
+            animation: glitch2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitch1 {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 1px); }
+            40% { transform: translate(2px, -1px); }
+            60% { transform: translate(-1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+        }
+
+        @keyframes glitch2 {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(2px, -1px); }
+            40% { transform: translate(-2px, 1px); }
+            60% { transform: translate(1px, -1px); }
+            80% { transform: translate(-1px, 1px); }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.8em;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 10;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .footer span {
+            color: var(--accent-red);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-red);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-red-light);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                padding: 8px 15px;
+                font-size: 0.75em;
+            }
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+    <!-- Background Grid -->
+    <div class="grid-bg"></div>
+
+    <!-- Matrix Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Smoky Fog Layers -->
+    <div class="smoke-layer smoke-1"></div>
+    <div class="smoke-layer smoke-2"></div>
+    <div class="smoke-layer smoke-3"></div>
+    <div class="smoke-layer smoke-4"></div>
+    <div class="smoke-layer smoke-5"></div>
+
+    <!-- Scan Line -->
+    <div class="scan-line"></div>
+
+    <!-- Cursor Smoke Container -->
+    <div class="cursor-smoke-container" id="cursorSmokeContainer"></div>
+
+    <!-- Red Blitz Overlay -->
+    <div class="blitz-overlay" id="blitzOverlay"></div>
+
+    <!-- Screen Flash -->
+    <div class="screen-flash" id="screenFlash"></div>
+
+    {% if session.get('username') %}
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span>CYBERSEC</span>
+        </div>
+        <div class="nav-links">
+            <a href="/" {% if request.endpoint == 'index' %}class="active"{% endif %}>Dashboard</a>
+            <a href="/scan" {% if request.endpoint == 'scan_page' %}class="active"{% endif %}>New Scan</a>
+            <a href="/history" {% if request.endpoint == 'history_page' %}class="active"{% endif %}>History</a>
+            <a href="/landing#about">About</a>
+            <a href="/landing#features">Features</a>
+            <a href="/landing#contact">Contact</a>
+            {% if session.get('role') == 'admin' %}
+            <a href="/admin/dashboard" {% if request.endpoint == 'admin_dashboard' %}class="active"{% endif %}>Admin</a>
+            {% else %}
+            <a href="#" class="locked" title="🔒 Admin access restricted" onclick="alert('🔒 Admin access restricted. Contact administrator.')">Admin 🔒</a>
+            {% endif %}
+            <div class="user-info">
+                <span class="role">{{ session.get('role', 'USER') }}</span>
+                <span class="username">{{ session.get('username') }}</span>
+            </div>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <div class="footer">
+        <p><span>CYBERPUNK SECURITY SCANNER</span> // SYSTEM ONLINE // SECURE CONNECTION</p>
+    </div>
+
+    <script>
+        // ===== MATRIX PARTICLE RAIN =====
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.speed = Math.random() * 2 + 1;
+                this.char = chars[Math.floor(Math.random() * chars.length)];
+                this.size = Math.random() * 14 + 10;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                    this.char = chars[Math.floor(Math.random() * chars.length)];
+                }
+            }
+
+            draw() {
+                ctx.font = `${this.size}px 'Share Tech Mono'`;
+                ctx.fillStyle = `rgba(0, 255, 100, ${this.opacity})`;
+                ctx.fillText(this.char, this.x, this.y);
+            }
+        }
+
+        for (let i = 0; i < 80; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.fillStyle = 'rgba(5, 0, 8, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // ===== CURSOR SMOKE TRAIL =====
+        const smokeContainer = document.getElementById('cursorSmokeContainer');
+        let lastSmokeX = 0, lastSmokeY = 0;
+        let smokeThrottle = 0;
+
+        function createSmokeParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'smoke-particle';
+
+            const size = Math.random() * 30 + 15;
+            const colors = [
+                'rgba(255, 0, 60, 0.15)',
+                'rgba(0, 240, 255, 0.1)',
+                'rgba(255, 255, 255, 0.08)',
+                'rgba(255, 0, 60, 0.1)'
+            ];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            particle.style.cssText = `
+                left: ${x}px;
+                top: ${y}px;
+                width: ${size}px;
+                height: ${size}px;
+                background: radial-gradient(circle, ${color} 0%, transparent 70%);
+                filter: blur(${Math.random() * 5 + 3}px);
+            `;
+
+            smokeContainer.appendChild(particle);
+
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, 1500);
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const dx = e.clientX - lastSmokeX;
+            const dy = e.clientY - lastSmokeY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            smokeThrottle += distance;
+
+            if (smokeThrottle > 15) {
+                createSmokeParticle(e.clientX, e.clientY);
+                smokeThrottle = 0;
+                lastSmokeX = e.clientX;
+                lastSmokeY = e.clientY;
+            }
+        });
+
+        // ===== RED BLITZ LIGHTNING =====
+        const blitzOverlay = document.getElementById('blitzOverlay');
+        const screenFlash = document.getElementById('screenFlash');
+
+        function createLightningStrike(startX, startY) {
+            // Main strike
+            const strike = document.createElement('div');
+            strike.className = 'blitz-flash';
+            const height = 100 + Math.random() * 200;
+            strike.style.cssText = `
+                left: ${startX}px;
+                top: ${startY}px;
+                height: ${height}px;
+                animation: blitzStrike 0.4s ease-out forwards;
+            `;
+            blitzOverlay.appendChild(strike);
+
+            // Branches
+            const branchCount = 2 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < branchCount; i++) {
+                const branch = document.createElement('div');
+                branch.className = 'blitz-branch';
+                const angle = (Math.random() - 0.5) * 120;
+                const branchY = startY + Math.random() * height * 0.7;
+                branch.style.cssText = `
+                    left: ${startX}px;
+                    top: ${branchY}px;
+                    transform: rotate(${angle}deg);
+                    animation: blitzBranch 0.3s ease-out ${Math.random() * 0.1}s forwards;
+                `;
+                blitzOverlay.appendChild(branch);
+
+                setTimeout(() => branch.remove(), 600);
+            }
+
+            // Screen flash
+            screenFlash.style.setProperty('--flash-x', (startX / window.innerWidth * 100) + '%');
+            screenFlash.style.setProperty('--flash-y', (startY / window.innerHeight * 100) + '%');
+            screenFlash.classList.add('active');
+
+            setTimeout(() => {
+                strike.remove();
+                screenFlash.classList.remove('active');
+            }, 500);
+        }
+
+        function triggerBlitz() {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight * 0.7;
+            createLightningStrike(x, y);
+
+            // Multiple strikes
+            if (Math.random() > 0.5) {
+                setTimeout(() => {
+                    createLightningStrike(
+                        x + (Math.random() - 0.5) * 200,
+                        y + Math.random() * 100
+                    );
+                }, 100 + Math.random() * 200);
+            }
+        }
+
+        // Random blitz every 6-12 seconds
+        function scheduleBlitz() {
+            const delay = 6000 + Math.random() * 6000;
+            setTimeout(() => {
+                triggerBlitz();
+                scheduleBlitz();
+            }, delay);
+        }
+        scheduleBlitz();
+
+        // Click to trigger blitz at cursor
+        document.addEventListener('click', (e) => {
+            createLightningStrike(e.clientX, e.clientY);
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
